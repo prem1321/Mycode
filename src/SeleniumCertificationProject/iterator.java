@@ -1,41 +1,64 @@
 package SeleniumCertificationProject;
 
-import java.io.FileOutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class iterator {
 	private static final char[] L = null;
-	WebDriver driver;
+	public static WebDriver driver = null; 
+	DesiredCapabilities caps;
 	String Var;
-@Test(dataProvider="Authentication")
+	String USERNAME = sauceconnect.USERNAME;
+	  String ACCESS_KEY = sauceconnect.ACCESS_KEY;
+	 static String URL = sauceconnect.URL;
+
+	 @BeforeTest
+	public void browser() throws Exception {
+
+		    caps = DesiredCapabilities.firefox();
+		    caps.setCapability("name", "First SeleniumTest");
+		    caps.setCapability("platform", "Windows 7");
+		    caps.setCapability("version", "28.0");
+		    //caps.setCapability("passed", "true");
+		     driver = new RemoteWebDriver(new URL(URL), caps);
+		    
+		    
+	}
+	 
+	
+	 
+	 @Test(dataProvider="Authentication")
 	public void main(String uname , String pwd) throws Exception {
 		// TODO Auto-generated method stub
-	
-	
-	driver = new FirefoxDriver();
-	Thread.sleep(5000);
-	
-	driver.get("http://demo.opensourcecms.com/wordpress/wp-login.php");
-	
-	Thread.sleep(5000);
-	driver.manage().window().maximize();
+		 driver.navigate().to("http://demo.opensourcecms.com/wordpress/wp-login.php");
 	
 	Thread.sleep(5000);
 	
+	
+	
+	
+	//driver.manage().window().maximize();
+	
+	Thread.sleep(5000);
+	driver.findElement(By.xpath("//input[@name='log']")).clear();
+	Thread.sleep(2000);
 	driver.findElement(By.xpath("//input[@name='log']")).sendKeys(uname);
+	Thread.sleep(5000);
+	
 	driver.findElement(By.xpath("//input[@id='user_pass']")).sendKeys(pwd);
 	
 	Thread.sleep(5000);
@@ -68,10 +91,10 @@ public class iterator {
 		    
 		   System.out.println(L);
 		   
-		    driver.close();
+			
 		  }
 	
-
+	
 @DataProvider(name = "Authentication")
     
     public static Object[][] credentials() {
@@ -83,8 +106,12 @@ public class iterator {
           return new Object[][] { { "admin", "demo123" }, { "admin", "demo123" }};
    
     }
-
-
+@AfterTest
+public void close(){
+	
+	driver.close();
+	driver.quit();
+}
 
 	}
 
