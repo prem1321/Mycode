@@ -18,13 +18,14 @@ import org.testng.annotations.Test;
 
 public class iterator {
 	private static final char[] L = null;
+	WebDriver driver;
 	String Var;
 @Test(dataProvider="Authentication")
 	public void main(String uname , String pwd) throws Exception {
 		// TODO Auto-generated method stub
 	
 	
-	WebDriver driver = new FirefoxDriver();
+	driver = new FirefoxDriver();
 	Thread.sleep(5000);
 	
 	driver.get("http://demo.opensourcecms.com/wordpress/wp-login.php");
@@ -82,6 +83,9 @@ public class iterator {
           return new Object[][] { { "admin", "demo123" }, { "admin", "demo123" }};
    
     }
+
+
+
 	}
 
 
