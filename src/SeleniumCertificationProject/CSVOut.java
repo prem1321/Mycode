@@ -1,7 +1,10 @@
 package SeleniumCertificationProject;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,6 +18,9 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -24,55 +30,37 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 import sun.rmi.runtime.Log;
 
 public class CSVOut {
 	private static final char[] L = null;
 	WebDriver driver;
-	String Var;
-	String USERNAME = sauceconnect.USERNAME;
-	  String ACCESS_KEY = sauceconnect.ACCESS_KEY;
-	 static String URL = sauceconnect.URL;
-@Test(dataProvider="Authentication")
-	public void main(String uname , String pwd) throws Exception {
+	
+//	String USERNAME = sauceconnect.USERNAME;
+//	  String ACCESS_KEY = sauceconnect.ACCESS_KEY;
+//	 static String URL = sauceconnect.URL;
+@Test(dataProvider="Authentication",invocationCount=5)
+	public void main(String uname , String pwd ,int cnt) throws BiffException,IOException,RowsExceededException,WriteException, InterruptedException {
 		// TODO Auto-generated method stub
 	
-	  DesiredCapabilities caps = DesiredCapabilities.firefox();
-	    caps.setCapability("name", "First SeleniumTest");
-	    caps.setCapability("platform", "Windows 7");
-	    caps.setCapability("version", "28.0");
-	    //caps.setCapability("passed", "true");
-
-	    WebDriver driver = new RemoteWebDriver(new URL(URL), caps);
-	Thread.sleep(5000);
+//	  DesiredCapabilities caps = DesiredCapabilities.firefox();
+//	    caps.setCapability("name", "First SeleniumTest");
+//	    caps.setCapability("platform", "Windows 7");
+//	    caps.setCapability("version", "28.0");
+//	    //caps.setCapability("passed", "true");
+ 
 	
-	driver.get("http://demo.opensourcecms.com/wordpress/wp-login.php");
 	
-	Thread.sleep(5000);
-	driver.manage().window().maximize();
-	
-	Thread.sleep(5000);
-	
-	driver.findElement(By.xpath("//input[@name='log']")).sendKeys(uname);
-	driver.findElement(By.xpath("//input[@id='user_pass']")).sendKeys(pwd);
-	
-	Thread.sleep(5000);
-	driver.findElement(By.id("wp-submit")).click();  //click button
-	
-	Thread.sleep(5000);
-	
-	String	Var = driver.getTitle();
-	
-	Thread.sleep(5000);
-	
-	driver.findElement(By.xpath("//a[contains(.,'Appearance')]")).click();
-	
-	Thread.sleep(2000);
-	
-	String Var1 = driver.findElement(By.xpath("//a[contains(.,'Fabthemes')]")).getText();
-	
-	Thread.sleep(2000);
-	
+	// Specify the file path which you want to create or write
+	 
 	String excelFileName = "C:\\Users\\DELL-PC\\Desktop\\Book2.xls";//name of excel file
 
 	String sheetName = "Sheet1";//name of sheet
@@ -81,31 +69,37 @@ public class CSVOut {
 	HSSFSheet sheet = wb.createSheet(sheetName) ;
 
 	//iterating r number of rows
-	for (int r=sheet.getLastRowNum();r<=2; r++ )
-	{
-		HSSFRow row = sheet.createRow(r);
-		String V1 = Var;
-		String V2 = Var1;
-		String V3 = "A"+System.currentTimeMillis();
+	for(int i=0;i<10;i++){
+		
+		String	Var = uname+"A"+System.currentTimeMillis();
+		HSSFRow row = sheet.createRow(0+i);
 		//iterating c number of columns
-		for (int c=0;c <1; c++ )
-		{
-			HSSFCell cell = row.createCell(c);
+		
+			HSSFCell cell = row.createCell(0);
 
-			cell.setCellValue(V1+"|"+V2+V3);
+			cell.setCellValue(Var+uname);
 			
 			
-			System.out.println(Var);
+			System.out.println(Var+uname);
 			FileOutputStream fileOut = new FileOutputStream(excelFileName);
 
 			//write this workbook to an Outputstream.
 			wb.write(fileOut);
-			fileOut.flush();
-			fileOut.close();
-		}
-	}
+			
+			fileOut.close();}
+	}		
+			
+			
+		
+    
+    
+    
+ 
 
-		  }
+		
+	
+
+		  
 	
 
 @DataProvider(name = "Authentication")
@@ -116,7 +110,7 @@ public class CSVOut {
    
           // Here it will execute two times
    
-          return new Object[][] { { "admin", "demo123" }, { "admin", "demo123" }};
+          return new Object[][] { { "admin", "demo123" ,1}, { "admin", "demo123",2 }};
    
     }
 
