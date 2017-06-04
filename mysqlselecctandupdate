@@ -1,0 +1,87 @@
+package ExcelDriven;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class mysql1 {
+	// JDBC driver name and database URL
+	   static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
+	   static final String DB_URL = "jdbc:mysql://localhost/sakila";
+
+	   //  Database credentials
+	   static final String USER = "root";
+	   static final String PASS = "Test123#";
+	   
+	   public static void main(String[] args) {
+		   String uniqueID = "1"+ System.currentTimeMillis(); //UUID.randomUUID().toString();
+System.out.println(uniqueID);
+	   Connection conn = null;
+	   Statement stmt = null;
+	   try{
+	      //STEP 2: Register JDBC driver
+	      Class.forName("com.mysql.jdbc.Driver");
+
+	      //STEP 3: Open a connection
+	      System.out.println("Connecting to a selected database...");
+	      conn = DriverManager.getConnection(DB_URL, USER, PASS);
+	      System.out.println("Connected database successfully...");
+	      
+	      //STEP 4: Execute a query
+	      System.out.println("Creating statement...");
+	      stmt = conn.createStatement();
+
+	      String sql = "SELECT  * FROM actor where indicator ='Y' ORDER by RAND() LIMIT 1";
+	      ResultSet rs = stmt.executeQuery(sql);
+	      //STEP 5: Extract data from result set
+	      while(rs.next()){
+	         //Retrieve by column name
+	         int actor_id  = rs.getInt("actor_id");
+	         
+	         String first = rs.getString("first_name");
+	         String Indicator = rs.getString("indicator");
+//	         String last = rs.getString("last");
+	         System.out.print("ID: " + actor_id);
+	         System.out.print(", First: " + first);
+	         System.out.println(", Indicator: " + Indicator);
+	         // create the java mysql update preparedstatement
+	         String query = "update actor set indicator = 'N' where actor_id = ?";
+	         PreparedStatement preparedStmt = conn.prepareStatement(query);
+	         //preparedStmt.setInt   (1, 6000);
+	         preparedStmt.setInt(1, actor_id);
+
+	         // execute the java preparedstatement
+	         preparedStmt.executeUpdate();
+	                  //Display values
+	         
+	         
+	         
+	      }
+	      rs.close();
+	   }catch(SQLException se){
+	      //Handle errors for JDBC
+	      se.printStackTrace();
+	   }catch(Exception e){
+	      //Handle errors for Class.forName
+	      e.printStackTrace();
+	   }finally{
+	      //finally block used to close resources
+	      try{
+	         if(stmt!=null)
+	            conn.close();
+	      }catch(SQLException se){
+	      }// do nothing
+	      try{
+	         if(conn!=null)
+	            conn.close();
+	      }catch(SQLException se){
+	         se.printStackTrace();
+	      }//end finally try
+	   }//end try
+	   //System.out.println("Goodbye!");
+	}//end main
+	}//end JDBCExample
+
