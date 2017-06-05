@@ -1,0 +1,61 @@
+package ExcelDriven;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+public class demo {
+static String userid;
+static String uniqueid;
+ITestResult result;
+
+WebDriver driver;	
+
+@Test(dataProvider="Authentication")
+public  void test(String pwd) throws InterruptedException {
+
+		// TODO Auto-generated method stub
+driver = new FirefoxDriver();
+driver.navigate().to("http://demo.opensourcecms.com/wordpress/wp-login.php");
+
+Thread.sleep(5000);
+driver.findElement(By.xpath("//input[@name='log']")).clear();
+Thread.sleep(2000);
+driver.findElement(By.xpath("//input[@name='log']")).sendKeys("userid");
+Thread.sleep(2000);
+driver.findElement(By.xpath("//input[@id='user_pass']")).sendKeys(pwd);
+
+	}
+
+
+@DataProvider(name = "Authentication")
+    
+    public static Object[][] credentials() {
+   
+          // The number of times data is repeated, test will be executed the same no. of times
+   
+          // Here it will execute two times
+   
+          return new Object[][] { { "demo123" }, { "demo123" }};
+   
+}
+
+@AfterMethod
+public void tearDown(ITestResult result) {
+	
+        
+
+    if (result.getStatus() == ITestResult.SUCCESS) {
+    	MySQL_addrecords mt = new MySQL_addrecords() ;
+    	mt.Retrieve_Account();
+
+  //  System.out.println("uname"+" "+uniqueid);  
+	   
+   }
+}
+
+}
