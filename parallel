@@ -1,0 +1,69 @@
+package ExcelDriven;
+
+import java.util.concurrent.TimeoutException;
+
+import java.net.URL; 
+import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities; 
+import org.openqa.selenium.remote.RemoteWebDriver; 
+import org.testng.Assert; 
+import org.testng.annotations.AfterMethod; 
+import org.testng.annotations.BeforeMethod; 
+import org.testng.annotations.DataProvider; 
+import org.testng.annotations.Test; 
+
+public class parallel {
+
+	 private RemoteWebDriver driver; 
+
+     @BeforeMethod(alwaysRun = true) 
+     public void startDriver() throws TimeoutException 
+     { 
+
+             try 
+                    { 
+                            Capabilities desiredCapabilities= DesiredCapabilities.firefox(); 
+                            driver =  new FirefoxDriver(); 
+                            driver.executeScript("if (window.screen){window.moveTo(0, 0);window.resizeTo(window.screen.availWidth,window.screen.availHeight);};"); 
+
+                    } 
+                    catch (Exception e) { 
+                            System.out.println("Some other exception in reaching the url: "+ 
+"\n" + e.fillInStackTrace()); 
+                            Assert.fail("Could not reach the url: "); 
+                                                                } 
+
+     } 
+
+
+
+     @AfterMethod(alwaysRun = true) 
+     public void closeBrowser() 
+     { 
+             try 
+             { 
+                     driver.close(); 
+             } 
+             catch (Exception e) { 
+                            System.out.println("Some other exception in closing the browser: "+ "\n" + e.fillInStackTrace()); 
+                            Assert.fail("Could not have a clean close "); 
+                                                                } 
+     } 
+
+     @DataProvider(name = "urlProvider", parallel = true) 
+      public Object[][] urlProvider() { 
+
+             return new Object[][]{{"http://www.google.com"},{"http://www.yahoo.com"},{"http://www.microsoft.com"}}; 
+
+      } 
+
+     @Test(dataProvider = "urlProvider", threadPoolSize=5 ,timeOut =10000) 
+     public void openURL(String URL) throws InterruptedException 
+    { 
+            System.out.println("Inside openURL getting URL: " + URL); 
+            driver.get(URL); 
+            Thread.sleep(5000);
+    } 
+
+}
